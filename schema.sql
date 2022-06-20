@@ -35,19 +35,6 @@ CREATE TABLE IF NOT EXISTS `repository`.`project` (
 
 
 -- -----------------------------------------------------
--- Table `repository`.`pipeline`
--- -----------------------------------------------------
-DROP TABLE IF EXISTS `repository`.`pipeline` ;
-
-CREATE TABLE IF NOT EXISTS `repository`.`pipeline` (
-    `id` VARCHAR(36) NOT NULL,
-    `status` VARCHAR(255) NOT NULL,
-    PRIMARY KEY (`id`),
-    INDEX `idx_pipeline_status` (`status` ASC) VISIBLE)
-    ENGINE = InnoDB;
-
-
--- -----------------------------------------------------
 -- Table `repository`.`project_has_version`
 -- -----------------------------------------------------
 DROP TABLE IF EXISTS `repository`.`project_has_version` ;
@@ -55,18 +42,32 @@ DROP TABLE IF EXISTS `repository`.`project_has_version` ;
 CREATE TABLE IF NOT EXISTS `repository`.`project_has_version` (
     `version` VARCHAR(255) NOT NULL,
     `project_url_git` VARCHAR(255) NOT NULL,
-    `pipeline_id` VARCHAR(36) NULL,
     INDEX `fk_version_project1_idx` (`project_url_git` ASC) VISIBLE,
     PRIMARY KEY (`project_url_git`, `version`),
-    INDEX `fk_project_has_version_pipeline1_idx` (`pipeline_id` ASC) VISIBLE,
     CONSTRAINT `fk_version_project1`
     FOREIGN KEY (`project_url_git`)
     REFERENCES `repository`.`project` (`url_git`)
     ON DELETE NO ACTION
-    ON UPDATE NO ACTION,
-    CONSTRAINT `fk_project_has_version_pipeline1`
-    FOREIGN KEY (`pipeline_id`)
-    REFERENCES `repository`.`pipeline` (`id`)
+    ON UPDATE NO ACTION)
+    ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `repository`.`pipeline_job`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `repository`.`pipeline_job` ;
+
+CREATE TABLE IF NOT EXISTS `repository`.`pipeline_job` (
+    `id` VARCHAR(36) NOT NULL,
+    `status` VARCHAR(255) NOT NULL,
+    `url_git` VARCHAR(255) NOT NULL,
+    `version` VARCHAR(255) NOT NULL,
+    PRIMARY KEY (`id`),
+    INDEX `idx_pipeline_status` (`status` ASC) VISIBLE,
+    INDEX `fk_pipeline_project_has_version1_idx` (`url_git` ASC, `version` ASC) VISIBLE,
+    CONSTRAINT `fk_pipeline_project_has_version1`
+    FOREIGN KEY (`url_git` , `version`)
+    REFERENCES `repository`.`project_has_version` (`project_url_git` , `version`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
     ENGINE = InnoDB;
