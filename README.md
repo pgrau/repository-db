@@ -13,7 +13,7 @@ Schema of the database
 
 1. [Install Docker](https://www.docker.com/get-started)
 2. Clone this project: `git clone https://github.com/pgrau/repository-db`
-3. Move to the project folder: `cd repository`
+3. Move to the project folder: `cd repository-db`
 
 ### 🔥 Application execution
 
